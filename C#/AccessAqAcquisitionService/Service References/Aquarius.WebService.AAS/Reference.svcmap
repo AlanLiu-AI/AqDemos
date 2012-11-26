@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="a848dda1-5bb4-4a8b-862a-919ba5b127dd" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost/AQUARIUS/AQAcquisitionService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="AQAcquisitionService.xsd" MetadataType="Schema" ID="184d7341-5c73-482e-b546-1e67323a7ada" SourceId="1" SourceUrl="http://vmir1.ai.local/AQUARIUS/AQAcquisitionService.svc?xsd=xsd4" />
+    <MetadataFile FileName="AQAcquisitionService.wsdl" MetadataType="Wsdl" ID="a948265d-3636-4003-9c9c-2339804dadb9" SourceId="1" SourceUrl="http://vmir1.ai.local/AQUARIUS/AQAcquisitionService.svc?wsdl" />
+    <MetadataFile FileName="AQAcquisitionService1.xsd" MetadataType="Schema" ID="450922fd-40b8-47e3-89b7-3883f9ed5281" SourceId="1" SourceUrl="http://vmir1.ai.local/AQUARIUS/AQAcquisitionService.svc?xsd=xsd0" />
+    <MetadataFile FileName="AQAcquisitionService.disco" MetadataType="Disco" ID="07583be4-40d2-44f0-a912-ba1f19d474bd" SourceId="1" SourceUrl="http://vmir1.ai.local/AQUARIUS/AQAcquisitionService.svc?disco" />
+    <MetadataFile FileName="AQAcquisitionService2.xsd" MetadataType="Schema" ID="e46d8037-190f-430e-aaea-83baff79cefe" SourceId="1" SourceUrl="http://vmir1.ai.local/AQUARIUS/AQAcquisitionService.svc?xsd=xsd1" />
+    <MetadataFile FileName="AQAcquisitionService3.xsd" MetadataType="Schema" ID="d09a4bc1-4f36-4f77-b60d-922c4b25e754" SourceId="1" SourceUrl="http://vmir1.ai.local/AQUARIUS/AQAcquisitionService.svc?xsd=xsd3" />
+    <MetadataFile FileName="AQAcquisitionService4.xsd" MetadataType="Schema" ID="0ab25f24-37bf-493d-a089-a04da43509dc" SourceId="1" SourceUrl="http://vmir1.ai.local/AQUARIUS/AQAcquisitionService.svc?xsd=xsd2" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>
