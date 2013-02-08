@@ -366,14 +366,35 @@ ELSE BEGIN
 
         private static void ReadParameters(ExcelTable paramTable, StringBuilder sb)
         {
+            var idListDict = new Dictionary<string, string>();
+            foreach (var row in paramTable.Rows)
+            {
+                var parameterId = row[0];
+                var usgsId = row[4];
+                if (idListDict.ContainsKey(parameterId))
+                {
+                    idListDict[parameterId] = idListDict[parameterId] + "," + usgsId;
+                }
+                else
+                {
+                    idListDict.Add(parameterId, usgsId);
+                }
+            }
+            var didList = new List<string>();
             foreach (var row in paramTable.Rows)
             {
                 var parameterId = CastStrTo(row[0], 50);
+                if (didList.Contains(parameterId))
+                {
+                    //We choose the first parameterId if there are duplication in Excel Sheet
+                    continue;
+                }
                 var displayId = CastStrTo(row[1], 256);
                 var unitGroupId = CastStrTo(row[2], 50);
                 var defaultUnitId = CastStrTo(row[3], 50);
                 const int defaultInterpolationTypeId = 7;
-                var name = CastStrTo(row[9], 256);
+                var usgsIds = idListDict.ContainsKey(row[0]) ? idListDict[row[0]] : row[0];
+                var name = CastStrTo(usgsIds + " - " + row[9], 256);
                 const int system = 1;
 
                 sb.AppendFormat(@"SELECT @CNT = COUNT(*) FROM Parameter WHERE ParameterId={0};
@@ -404,6 +425,7 @@ ELSE BEGIN
 ", parameterId, LanuguageId, name);
                 sb.AppendFormat(@"END
 ");
+                didList.Add(parameterId);
             }
         }
 
