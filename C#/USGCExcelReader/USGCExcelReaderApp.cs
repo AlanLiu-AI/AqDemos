@@ -79,17 +79,19 @@ namespace USGCExcelReader
         }
     }
 
-    public class MetadataTables
+    public class MetadataParamTables
     {
         public ExcelTable ParamTable;
         public ExcelTable UnitsTable;
         public ExcelTable UnitsGroupTable;
+        public ExcelTable FlagsTable;
 
-        public MetadataTables()
+        public MetadataParamTables()
         {
             ParamTable = new ExcelTable("NWIS to AI Map", 'A', 'J');
             UnitsTable = new ExcelTable("AI Units", 'A', 'I');
             UnitsGroupTable = new ExcelTable("AI Unit Groups", 'A', 'L');
+            FlagsTable = new ExcelTable("AI Flags", 'A', 'F');
         }
 
         public void Load(Excel.Workbook xlWorkBook)
@@ -99,7 +101,6 @@ namespace USGCExcelReader
             UnitsGroupTable.Load(xlWorkBook);
         }
     }
-
 
     class USGCExcelReaderApp
     {
@@ -122,7 +123,7 @@ namespace USGCExcelReader
                 GC.Collect();
             }
         }
-        private static void ReadExcelToSql(string inputExcelFile, StringBuilder sb)
+        private static void ReadENwisParmsExcelToSql(string inputExcelFile, StringBuilder sb)
         {
             if (!File.Exists(inputExcelFile))
             {
@@ -132,7 +133,7 @@ namespace USGCExcelReader
             object misValue = Missing.Value;
             var xlApp = new Excel.Application();
             var xlWorkBook = xlApp.Workbooks.Open(inputExcelFile, 0, true, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
-            var cachedMetadataTables = new MetadataTables();
+            var cachedMetadataTables = new MetadataParamTables();
             if (xlWorkBook != null)
             {
                 cachedMetadataTables.Load(xlWorkBook);
@@ -149,19 +150,48 @@ namespace USGCExcelReader
             ReadDataIntoSQL(cachedMetadataTables, sb);
         }
 
-        private static void ReadDataIntoSQL(MetadataTables cachedMetadataTables, StringBuilder sb)
+        private static void ReadENwisFlagsExcelToSql(string inputExcelFile, StringBuilder sb)
+        {
+            if (!File.Exists(inputExcelFile))
+            {
+                throw new ArgumentException("Input excel file '" + inputExcelFile + "' does not exist!");
+            }
+
+            object misValue = Missing.Value;
+            var xlApp = new Excel.Application();
+            var xlWorkBook = xlApp.Workbooks.Open(inputExcelFile, 0, true, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+            var flagsTable = new ExcelTable("AI Flags", 'A', 'F');
+            if (xlWorkBook != null)
+            {
+                flagsTable.Load(xlWorkBook);
+                xlWorkBook.Close(true, misValue, misValue);
+                xlApp.Quit();
+            }
+            ReleaseObject(xlWorkBook);
+            ReleaseObject(xlApp);
+
+            Console.WriteLine("[Debug] flagsTable is loadded.");
+
+            sb.AppendLine(@"USE $(DBName)");
+            sb.AppendLine(@"DECLARE @CNT INT;");
+            sb.AppendLine(@"DECLARE @FlagDataId NUMERIC(18);");
+            sb.AppendLine();
+            ReadFlags(flagsTable, sb);
+        }
+
+        private static void ReadDataIntoSQL(MetadataParamTables cachedMetadataParamTables, StringBuilder sb)
         {
             sb.AppendLine(@"USE $(DBName)");
             sb.AppendLine(@"DECLARE @CNT INT;");
             sb.AppendLine();
             //first go through UnitsGroup 
-            ReadUnitsGroup(cachedMetadataTables.UnitsGroupTable, sb);
+            ReadUnitsGroup(cachedMetadataParamTables.UnitsGroupTable, sb);
 
             //Then go through Units
-            ReadUnits(cachedMetadataTables.UnitsTable, sb);
+            ReadUnits(cachedMetadataParamTables.UnitsTable, sb);
 
             //Last go through Parameters
-            ReadParameters(cachedMetadataTables.ParamTable, sb);
+            ReadParameters(cachedMetadataParamTables.ParamTable, sb);
         }
 
         private static string CastStrTo(string value)
@@ -192,69 +222,88 @@ namespace USGCExcelReader
 
         private static T CastTo<T>(string value, T defaultValue)
         {
-            if (string.IsNullOrEmpty(value))
-                return defaultValue;
-            object retObj = null;
             var typeCode = Type.GetTypeCode(typeof (T));
+            object retObj = null;
             try
             {
-                switch (typeCode)
+                if (string.IsNullOrEmpty(value))
                 {
-                    case TypeCode.String:
-                        retObj = CastStrTo(value);
-                        break;
-                    case TypeCode.Boolean:
-                        retObj = Convert.ToBoolean(value);
-                        break;
-                    case TypeCode.Char:
-                        retObj = Convert.ToChar(value);
-                        break;
-                    case TypeCode.SByte:
-                        retObj = Convert.ToSByte(value);
-                        break;
-                    case TypeCode.Byte:
-                        retObj = Convert.ToByte(value);
-                        break;
-                    case TypeCode.Int16:
-                        retObj = Convert.ToInt16(value);
-                        break;
-                    case TypeCode.UInt16:
-                        retObj = Convert.ToUInt16(value);
-                        break;
-                    case TypeCode.Int32:
-                        retObj = Convert.ToInt32(value);
-                        break;
-                    case TypeCode.UInt32:
-                        retObj = Convert.ToUInt32(value);
-                        break;
-                    case TypeCode.Int64:
-                        retObj = Convert.ToInt64(value);
-                        break;
-                    case TypeCode.UInt64:
-                        retObj = Convert.ToUInt64(value);
-                        break;
-                    case TypeCode.Single:
-                        retObj = Convert.ToSingle(value);
-                        break;
-                    case TypeCode.Double:
-                        retObj = Convert.ToDouble(value);
-                        break;
-                    case TypeCode.Decimal:
-                        retObj = Convert.ToDecimal(value);
-                        break;
+                    switch (typeCode)
+                    {
+                        case TypeCode.String:
+                            retObj = "'" + defaultValue + "'";
+                            break;
+                        default:
+                            retObj = defaultValue;
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (typeCode)
+                    {
+                        case TypeCode.String:
+                            var str = CastStrTo(value);
+                            if ("''" == str)
+                            {
+                                str = "'" + defaultValue + "'";
+                            }
+                            retObj = str;
+                            break;
+                        case TypeCode.Boolean:
+                            retObj = Convert.ToBoolean(value);
+                            break;
+                        case TypeCode.Char:
+                            retObj = Convert.ToChar(value);
+                            break;
+                        case TypeCode.SByte:
+                            retObj = Convert.ToSByte(value);
+                            break;
+                        case TypeCode.Byte:
+                            retObj = Convert.ToByte(value);
+                            break;
+                        case TypeCode.Int16:
+                            retObj = Convert.ToInt16(value);
+                            break;
+                        case TypeCode.UInt16:
+                            retObj = Convert.ToUInt16(value);
+                            break;
+                        case TypeCode.Int32:
+                            retObj = Convert.ToInt32(value);
+                            break;
+                        case TypeCode.UInt32:
+                            retObj = Convert.ToUInt32(value);
+                            break;
+                        case TypeCode.Int64:
+                            retObj = Convert.ToInt64(value);
+                            break;
+                        case TypeCode.UInt64:
+                            retObj = Convert.ToUInt64(value);
+                            break;
+                        case TypeCode.Single:
+                            retObj = Convert.ToSingle(value);
+                            break;
+                        case TypeCode.Double:
+                            retObj = Convert.ToDouble(value);
+                            break;
+                        case TypeCode.Decimal:
+                            retObj = Convert.ToDecimal(value);
+                            break;
 
-                    case TypeCode.DateTime:
-                        retObj = Convert.ToDateTime(value);
-                        break;
+                        case TypeCode.DateTime:
+                            retObj = Convert.ToDateTime(value);
+                            break;
 
-                    case TypeCode.Empty:
-                    case TypeCode.DBNull:
-                        break;
-                    default:
-                        Console.WriteLine("[WARN ] Not recognize type for ConvertUtil.To<{0}>({1}, {2}).", typeCode.ToString(),
-                                        value.GetType().FullName, defaultValue);
-                        retObj = value;
-                        break;
+                        case TypeCode.Empty:
+                        case TypeCode.DBNull:
+                            break;
+                        default:
+                            Console.WriteLine("[WARN ] Not recognize type for ConvertUtil.To<{0}>({1}, {2}).",
+                                              typeCode.ToString(),
+                                              value.GetType().FullName, defaultValue);
+                            retObj = value;
+                            break;
+                    }
                 }
                 if (retObj != null)
                 {
@@ -390,8 +439,8 @@ ELSE BEGIN
                     continue;
                 }
                 var displayId = CastStrTo(row[1], 256);
-                var unitGroupId = CastStrTo(row[2], 50);
-                var defaultUnitId = CastStrTo(row[3], 50);
+                var defaultUnitId = CastStrTo(row[2], 50);
+                var unitGroupId = CastStrTo(row[3], 50);
                 const int defaultInterpolationTypeId = 7;
                 var usgsIds = idListDict.ContainsKey(row[0]) ? idListDict[row[0]] : row[0];
                 var name = CastStrTo(usgsIds + " - " + row[9], 256);
@@ -429,19 +478,83 @@ ELSE BEGIN
             }
         }
 
+        private static void ReadFlags(ExcelTable flagsTable, StringBuilder sb)
+        {
+            foreach (var row in flagsTable.Rows)
+            {
+                var code = CastTo(row[0], 0);
+                var typeCode = CastStrTo(row[1], 255);
+                var shortName = CastTo(row[2], "UNSP");
+                var color = CastTo(row[3], "#FFFFFF");
+                var reportMarker = shortName;// CastStrTo("UNSP");
+                const int system = 1;
+                var typeName = CastStrTo(row[4], 255);
+                var description = CastStrTo(row[5], 1024);
+                if (code < 0)
+                {
+                    Console.WriteLine("[Warn ] flag is ignored, which code is '" + code + "', typecode is '" + typeCode + "'!");
+                    continue;
+                }
+
+                sb.AppendFormat(@"SET @FlagDataId = 0;
+");
+                sb.AppendFormat(@"SELECT @CNT = COUNT(*) FROM Flag WHERE TypeCode={0} AND Code={1};
+", typeCode, code);
+                sb.AppendFormat(@"IF @CNT > 0 BEGIN
+");
+                sb.AppendFormat(@"  SELECT @FlagDataId=FlagID FROM Flag WHERE TypeCode={0} AND Code={1};
+", typeCode, code);
+                sb.AppendFormat(@"  UPDATE Flag SET shortName={2},color={3},reportMarker={4},system={5},lastModified={6} WHERE TypeCode={0} AND Code={1};
+", typeCode, code, shortName, color, reportMarker, system, CurrentDateTime);
+
+                sb.AppendFormat(@"END
+ELSE BEGIN
+");
+                sb.AppendFormat(@"  SELECT @FlagDataId=Max(FlagID)+1 FROM Flag;
+");
+                sb.AppendFormat(@"  INSERT INTO Flag (FlagID,TypeCode,Code,shortName,color,reportMarker,system,lastModified) VALUES (@FlagDataId, {0},{1},{2},{3},{4},{5},{6});
+", typeCode, code, shortName, color, reportMarker, system, CurrentDateTime);
+                sb.AppendFormat(@"END
+");
+                sb.AppendFormat(@"SELECT @CNT = COUNT(*) FROM FlagLoc WHERE FlagId=@FlagDataId AND LanguageID={0};
+", LanuguageId);
+                sb.AppendFormat(@"IF @CNT > 0 BEGIN
+");
+                sb.AppendFormat(@"  UPDATE FlagLoc SET TypeName={1},Description={2} WHERE FlagId=@FlagDataId AND LanguageID={0};
+", LanuguageId, typeName, description);
+
+                sb.AppendFormat(@"END
+ELSE BEGIN
+");
+                sb.AppendFormat(@"  INSERT INTO FlagLoc (FlagId,LanguageID,TypeName,Description) VALUES (@FlagDataId, {0},{1},{2});
+", LanuguageId, typeName, description);
+                sb.AppendFormat(@"END
+");
+            }
+        }
+
         static void Main()
         {
             try
             {
+                Console.WriteLine("[Debug] Current directory is: {0}", Environment.CurrentDirectory);
                 const string inputFile = @"AiToNwisParms V4_2013-02-05.xlsx";
                 const string targetSqlFile = @"AiToNwisParms.sql";
-                Console.WriteLine("[Debug] Current directory is: {0}", Environment.CurrentDirectory);
                 var input = Environment.CurrentDirectory + @"\..\..\" + inputFile;
                 var output = Environment.CurrentDirectory + @"\..\..\" + targetSqlFile;
                 var sb = new StringBuilder();
-                ReadExcelToSql(input, sb);
+                ReadENwisParmsExcelToSql(input, sb);
                 File.WriteAllText(output, sb.ToString(), Encoding.UTF8);
-                Console.WriteLine("[Info ] Succeeded.");
+                Console.WriteLine("[Info ] NwisParms conversion succeeded.");
+
+                const string flagFile = @"Flags and Remark mappings.xlsx";
+                const string flagSqlFile = @"AiToNwisFlags.sql";
+                input = Environment.CurrentDirectory + @"\..\..\" + flagFile;
+                output = Environment.CurrentDirectory + @"\..\..\" + flagSqlFile;
+                sb = new StringBuilder();
+                ReadENwisFlagsExcelToSql(input, sb);
+                File.WriteAllText(output, sb.ToString(), Encoding.UTF8);
+                Console.WriteLine("[Info ] Flags conversion succeeded.");
             }
             catch (Exception ex)
             {
