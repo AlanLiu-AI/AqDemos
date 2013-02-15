@@ -160,7 +160,7 @@ namespace USGCExcelReader
             object misValue = Missing.Value;
             var xlApp = new Excel.Application();
             var xlWorkBook = xlApp.Workbooks.Open(inputExcelFile, 0, true, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
-            var flagsTable = new ExcelTable("AI Flags", 'A', 'F');
+            var flagsTable = new ExcelTable("Sheet1", 'A', 'F');
             if (xlWorkBook != null)
             {
                 flagsTable.Load(xlWorkBook);
