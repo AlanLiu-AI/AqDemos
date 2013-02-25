@@ -1,9 +1,11 @@
 
 package org.datacontract.schemas._2004._07.aquariusdataservice;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -23,8 +25,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="Aqtimeseriestype" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="EndTime" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
  *         &lt;element name="EndValue" type="{http://www.w3.org/2001/XMLSchema}double"/>
+ *         &lt;element name="Identifier" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="Label" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="LastModified" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
+ *         &lt;element name="ParameterType" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="TotalSamples" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -40,8 +44,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "aqtimeseriestype",
     "endTime",
     "endValue",
+    "identifier",
     "label",
     "lastModified",
+    "parameterType",
     "totalSamples"
 })
 public class TimeSeriesDescription {
@@ -55,11 +61,15 @@ public class TimeSeriesDescription {
     protected XMLGregorianCalendar endTime;
     @XmlElement(name = "EndValue")
     protected double endValue;
+    @XmlElementRef(name = "Identifier", namespace = "http://schemas.datacontract.org/2004/07/AquariusDataService", type = JAXBElement.class, required = false)
+    protected JAXBElement<String> identifier;
     @XmlElement(name = "Label", required = true, nillable = true)
     protected String label;
     @XmlElement(name = "LastModified", required = true)
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar lastModified;
+    @XmlElementRef(name = "ParameterType", namespace = "http://schemas.datacontract.org/2004/07/AquariusDataService", type = JAXBElement.class, required = false)
+    protected JAXBElement<String> parameterType;
     @XmlElement(name = "TotalSamples")
     protected long totalSamples;
 
@@ -144,6 +154,30 @@ public class TimeSeriesDescription {
     }
 
     /**
+     * Gets the value of the identifier property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     
+     */
+    public JAXBElement<String> getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * Sets the value of the identifier property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     
+     */
+    public void setIdentifier(JAXBElement<String> value) {
+        this.identifier = value;
+    }
+
+    /**
      * Gets the value of the label property.
      * 
      * @return
@@ -189,6 +223,30 @@ public class TimeSeriesDescription {
      */
     public void setLastModified(XMLGregorianCalendar value) {
         this.lastModified = value;
+    }
+
+    /**
+     * Gets the value of the parameterType property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     
+     */
+    public JAXBElement<String> getParameterType() {
+        return parameterType;
+    }
+
+    /**
+     * Sets the value of the parameterType property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     
+     */
+    public void setParameterType(JAXBElement<String> value) {
+        this.parameterType = value;
     }
 
     /**

@@ -1019,6 +1019,58 @@ public interface IAQAcquisitionService {
 
     /**
      * 
+     * @param locationId
+     * @param changedSince
+     * @return
+     *     returns javax.xml.ws.Response<org.tempuri.GetFieldVisitsByLocationChangedSinceResponse>
+     */
+    @WebMethod(operationName = "GetFieldVisitsByLocationChangedSince", action = "http://tempuri.org/IAQAcquisitionService/GetFieldVisitsByLocationChangedSince")
+    @RequestWrapper(localName = "GetFieldVisitsByLocationChangedSince", targetNamespace = "http://tempuri.org/", className = "org.tempuri.GetFieldVisitsByLocationChangedSince")
+    @ResponseWrapper(localName = "GetFieldVisitsByLocationChangedSinceResponse", targetNamespace = "http://tempuri.org/", className = "org.tempuri.GetFieldVisitsByLocationChangedSinceResponse")
+    public Response<GetFieldVisitsByLocationChangedSinceResponse> getFieldVisitsByLocationChangedSinceAsync(
+        @WebParam(name = "locationId", targetNamespace = "http://tempuri.org/")
+        Long locationId,
+        @WebParam(name = "changedSince", targetNamespace = "http://tempuri.org/")
+        String changedSince);
+
+    /**
+     * 
+     * @param locationId
+     * @param asyncHandler
+     * @param changedSince
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "GetFieldVisitsByLocationChangedSince", action = "http://tempuri.org/IAQAcquisitionService/GetFieldVisitsByLocationChangedSince")
+    @RequestWrapper(localName = "GetFieldVisitsByLocationChangedSince", targetNamespace = "http://tempuri.org/", className = "org.tempuri.GetFieldVisitsByLocationChangedSince")
+    @ResponseWrapper(localName = "GetFieldVisitsByLocationChangedSinceResponse", targetNamespace = "http://tempuri.org/", className = "org.tempuri.GetFieldVisitsByLocationChangedSinceResponse")
+    public Future<?> getFieldVisitsByLocationChangedSinceAsync(
+        @WebParam(name = "locationId", targetNamespace = "http://tempuri.org/")
+        Long locationId,
+        @WebParam(name = "changedSince", targetNamespace = "http://tempuri.org/")
+        String changedSince,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetFieldVisitsByLocationChangedSinceResponse> asyncHandler);
+
+    /**
+     * 
+     * @param locationId
+     * @param changedSince
+     * @return
+     *     returns org.datacontract.schemas._2004._07.aqacquisitionservice.ArrayOfFieldVisit
+     */
+    @WebMethod(operationName = "GetFieldVisitsByLocationChangedSince", action = "http://tempuri.org/IAQAcquisitionService/GetFieldVisitsByLocationChangedSince")
+    @WebResult(name = "GetFieldVisitsByLocationChangedSinceResult", targetNamespace = "http://tempuri.org/")
+    @RequestWrapper(localName = "GetFieldVisitsByLocationChangedSince", targetNamespace = "http://tempuri.org/", className = "org.tempuri.GetFieldVisitsByLocationChangedSince")
+    @ResponseWrapper(localName = "GetFieldVisitsByLocationChangedSinceResponse", targetNamespace = "http://tempuri.org/", className = "org.tempuri.GetFieldVisitsByLocationChangedSinceResponse")
+    public ArrayOfFieldVisit getFieldVisitsByLocationChangedSince(
+        @WebParam(name = "locationId", targetNamespace = "http://tempuri.org/")
+        Long locationId,
+        @WebParam(name = "changedSince", targetNamespace = "http://tempuri.org/")
+        String changedSince);
+
+    /**
+     * 
      * @param fv
      * @return
      *     returns javax.xml.ws.Response<org.tempuri.SaveFieldVisitResponse>

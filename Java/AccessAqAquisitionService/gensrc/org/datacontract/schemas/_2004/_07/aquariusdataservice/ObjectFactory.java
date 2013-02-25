@@ -30,6 +30,8 @@ public class ObjectFactory {
     private final static QName _TimeSeriesDescription_QNAME = new QName("http://schemas.datacontract.org/2004/07/AquariusDataService", "TimeSeriesDescription");
     private final static QName _ArrayOfTimeSeriesDescription_QNAME = new QName("http://schemas.datacontract.org/2004/07/AquariusDataService", "ArrayOfTimeSeriesDescription");
     private final static QName _LocationDTOExtendedAttributes_QNAME = new QName("http://schemas.datacontract.org/2004/07/AquariusDataService", "ExtendedAttributes");
+    private final static QName _TimeSeriesDescriptionParameterType_QNAME = new QName("http://schemas.datacontract.org/2004/07/AquariusDataService", "ParameterType");
+    private final static QName _TimeSeriesDescriptionIdentifier_QNAME = new QName("http://schemas.datacontract.org/2004/07/AquariusDataService", "Identifier");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.datacontract.schemas._2004._07.aquariusdataservice
@@ -113,6 +115,24 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/AquariusDataService", name = "ExtendedAttributes", scope = LocationDTO.class)
     public JAXBElement<ArrayOfKeyValueOfstringanyType> createLocationDTOExtendedAttributes(ArrayOfKeyValueOfstringanyType value) {
         return new JAXBElement<ArrayOfKeyValueOfstringanyType>(_LocationDTOExtendedAttributes_QNAME, ArrayOfKeyValueOfstringanyType.class, LocationDTO.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/AquariusDataService", name = "ParameterType", scope = TimeSeriesDescription.class)
+    public JAXBElement<String> createTimeSeriesDescriptionParameterType(String value) {
+        return new JAXBElement<String>(_TimeSeriesDescriptionParameterType_QNAME, String.class, TimeSeriesDescription.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/AquariusDataService", name = "Identifier", scope = TimeSeriesDescription.class)
+    public JAXBElement<String> createTimeSeriesDescriptionIdentifier(String value) {
+        return new JAXBElement<String>(_TimeSeriesDescriptionIdentifier_QNAME, String.class, TimeSeriesDescription.class, value);
     }
 
 }

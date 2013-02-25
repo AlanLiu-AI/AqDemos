@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "AQAcquisitionService", targetNamespace = "http://tempuri.org/", wsdlLocation = "http://sooke/AQUARIUS/AqAcquisitionService.svc?wsdl")
+@WebServiceClient(name = "AQAcquisitionService", targetNamespace = "http://tempuri.org/", wsdlLocation = "http://10.10.222.100/AQUARIUS/AqAcquisitionService.svc?wsdl")
 public class AQAcquisitionService
     extends Service
 {
@@ -30,7 +30,7 @@ public class AQAcquisitionService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://sooke/AQUARIUS/AqAcquisitionService.svc?wsdl");
+            url = new URL("http://10.10.222.100/AQUARIUS/AqAcquisitionService.svc?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
